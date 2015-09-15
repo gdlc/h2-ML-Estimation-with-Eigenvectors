@@ -31,9 +31,9 @@ neg2LogLik<-function(logVar,V,d,y){
   lambda<-varG/varE
   dStar<-(d*lambda+1)
   sumLogD<-sum(log(dStar))
-  logLik_1<- -0.5*log( n*log(varE) + exp(sumLogD))
-  logLik_2<- (-0.5*sum(VySq/dStar))/varE
-  out<- -2*sum(logLik_1,logLik_2)
+  logLik_1<- ( n*log(varE) + sumLogD)
+  logLik_2<- sum(VySq/dStar)/varE
+  out<- sum(logLik_1,logLik_2)
   return(out)
 }
 ```R
@@ -41,37 +41,40 @@ neg2LogLik<-function(logVar,V,d,y){
 ### Example 1: Profiling the likelihood
 
 ```R
-  library(BGLR)
-  data(mice)
-  X=scale(mice.X) ## Genotypes
-  n=nrow(X) ; p=ncol(X)
-  h2=0.5
-  b=rnorm(sd=sqrt(h2/p),n=p)
-  signal=X%*%b
-  error=rnorm(sd=sqrt(1-h2),n=n)
-  y=error+signal
+  # Simple simulation
+   n=1000
+   p=50
+   allFreq<-rbeta(n=p,shape1=2,shape2=3)
+   X=matrix(nrow=n,ncol=p,NA)
+   for(i in 1:p){ X[,i]<-rbinom(n=n,prob=allFreq[i],size=2) }
+   
+   h2=0.5
+   b=rnorm(sd=sqrt(h2/p),n=p)
+   X=scale(X)
+   signal=X%*%b
+   error=rnorm(sd=sqrt(1-h2),n=n)
+   y=error+signal
   
+   
+   G=tcrossprod(X)/p
+   EVD=eigen(G)
   
-  G=tcrossprod(X)/p
+   h2Grid=seq(from=.01,to=.99,by=.01)
+   loglik=rep(NA,length(h2Grid))
   
-  EVD=eigen(G)
-  
-  vP=var(y)
-  
-  h2Grid=seq(from=.01,to=.99,by=.01)
-  loglik=rep(NA,length(h2Grid))
-  
-  for(i in 1:length(h2Grid)){
+   for(i in 1:length(h2Grid)){
     varG=vP*h2Grid[i]
     varE=vP*(1-h2Grid[i])
+    print(c(varE,varG))
     loglik[i]<-neg2LogLik(y=y,V=EVD$vectors,d=EVD$values,logVar=log(c(varE,varG)))
     print(i)
-  }
-  plot(-loglik~h2Grid,type='l')
+   }
+   plot(-loglik~h2Grid,type='l')
   
 ```
-# A wrapper to fit the model
+### A wrapper to fit the model
 
+```R
 fitVarComp<-function(y,G=NULL,EVD=NULL,minEigVal=1e-4,logVar=log(0.5*rep(var(y),2))){
   if(is.null(EVD)){
     if(is.null(G)){ 
@@ -85,7 +88,7 @@ fitVarComp<-function(y,G=NULL,EVD=NULL,minEigVal=1e-4,logVar=log(0.5*rep(var(y),
   EVD$vectors=EVD$vectors[,tmp]
   EVD$values=EVD$values[tmp]
   fm=optim(fn=neg2LogLik,par=logVar,y=y,V=EVD$vectors,d=EVD$values)
-  
+  return(fm)
 }
 
 ```
