@@ -36,7 +36,7 @@ neg2LogLik<-function(logVar,V,d,y){
   out<- sum(logLik_1,logLik_2)
   return(out)
 }
-```R
+```
 
 ### Example 1: Profiling the likelihood
 
