@@ -23,9 +23,9 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
   lambda<-varU/varE
   dStar<-(d*lambda+1)
   sumLogD<-sum(log(dStar))
-  logLik_1<- -0.5*( n*log(varE) + sumLogD )
-  logLik_2<- (-0.5*sum(Vy2/dStar))/varE
-  out<- -2*sum(logLik_1,logLik_2)
+  neg2LogLik_1<- ( n*log(varE) + sumLogD )
+  neg2LogLik_2<- (sum(Vy2/dStar))/varE
+  out<- neg2LogLik_1+neg2LogLik_2
   return(out)
 }
 
@@ -35,24 +35,24 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
 
 ```R
   # Simple simulation
-   n=1000
-   p=20
-   allFreq<-rbeta(n=p,shape1=2,shape2=3)
-   X=matrix(nrow=n,ncol=p,NA)
-   for(i in 1:p){ X[,i]<-rbinom(n=n,prob=allFreq[i],size=2) }
+   library(BGLR)
+   data(mice)
+   
+   X=scale(mice.X)
+   n=nrow(X) ; p=ncol(X)
    
    h2=0.5
    b=rnorm(sd=sqrt(h2/p),n=p)
-   X=scale(X)
+   
    signal=X%*%b
    error=rnorm(sd=sqrt(1-h2),n=n)
-   y=error+signal
+   y=signal+error
   
    
    G=tcrossprod(X)/p
    EVD=eigen(G)
   
-   h2Grid=seq(from=.01,to=.99,by=.01)
+   h2Grid=seq(from=.1,to=.8,by=.01)
    loglik=rep(NA,length(h2Grid))
   
    for(i in 1:length(h2Grid)){
@@ -62,14 +62,18 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
     loglik[i]<-neg2LogLik(y=y,V=EVD$vectors,d=EVD$values,logVar=log(c(varE,varG)))
     print(i)
    }
-   plot(-loglik~h2Grid,type='l')
+   plot(-loglik~h2Grid,type='l'); abline(v=var(signal)/var(y),col='green')
   
 ```
 ### Estimation using optim
 
 ```R
-
     fm<-optim(fn=neg2LogLik,V=EVD$vectors,d=EVD$values,y=y,par=log(c(.2,.8)),
-                                n=length(y),hessian=FALSE)
-
+                                n=length(y),hessian=FALSE) 
+    varEHat=exp(fm$par[1])
+    varGHat=exp(fm$par[2])
+    abline(v=(varGHat/(varGHat+varEHat)),col=4)
 ```
+
+
+###  Example of an averaging 
