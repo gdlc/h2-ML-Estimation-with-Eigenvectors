@@ -1,17 +1,8 @@
 ### Variance Componenets Estimation Using the Eigen Decomposition
 
-The code provided below estimates genomic heritability in the following random effects model
+The code presented below contains functions for evaluating the likelihood of a random effects model using the eigenvalue decomposition of the co-variance matrix associated to a random effect. The model and derivations are described briefly [here](ttps://github.com/gdlc/h2-ML-Estimation-with-Eigenvectors/blob/master/simple_neg2loglik.docx). 
 
-   yi= ui +ei 
-   
-where: ei~iid N(0,vE)  and u=[u1,...,un]' ~N(0,G*vG)
-
-G is an nxn matrix describing covariances between the levels of the random effects. The model assumes one data point per level of the random
-effect (this can be easily circunvents).
-
-
-Several authors have explited the equivalence between Gaussian processes and reandom regressions on eigenvectors (e.g., [de los Campos et al., 2010](http://www.ncbi.nlm.nih.gov/pubmed/20943010) ,[Zhou and Stephens, 2012 ](http://www.ncbi.nlm.nih.gov/pubmed/22706312?dopt=Abstract&holding=npg), [Janss et al., 2012](http://www.genetics.org/content/192/2/693.full.pdf)). Here we use this duality between Gaussian processes and random regression on eigenvectors to simplify the computation of the log likelihood of a random effects model. Details of the derivation are provided [here]().
-
+Several authors have explited the equivalence between Gaussian processes and reandom regressions on eigenvectors, a few examples of these are: [de los Campos et al., 2010](http://www.ncbi.nlm.nih.gov/pubmed/20943010) ,[Zhou and Stephens, 2012 ](http://www.ncbi.nlm.nih.gov/pubmed/22706312?dopt=Abstract&holding=npg) and  [Janss et al., 2012](http://www.genetics.org/content/192/2/693.full.pdf)). 
 ```R
 # A function that evaluates the log-likelihood
 neg2LogLik<-function(logVar,V,y,d,n=length(y)){
