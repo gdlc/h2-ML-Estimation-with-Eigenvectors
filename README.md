@@ -14,28 +14,21 @@ References: [de los Campos et al., 2010]()
 
 ```R
 # A function that evaluates the log-likelihood
-neg2LogLik<-function(logVar,V,d,y){
-  ##
-  #   logVar: log(residualVariance, geneticVariance)
-  #   V: eigenvectors
-  #   d: eigenvalues
-  #   y: phenotypes
-  # Return: the log-likelihood
-  ##
-  n<-length(y)
+neg2LogLik<-function(logVar,V,y,d,n=length(y)){
   y<-y-mean(y)
   Vy<-crossprod(V,y)
-  VySq<-as.vector(Vy)^2
+  Vy2<-as.vector(Vy)^2
   varE<-exp(logVar[1])
-  varG<-exp(logVar[2])
-  lambda<-varG/varE
+  varU<-exp(logVar[2])
+  lambda<-varU/varE
   dStar<-(d*lambda+1)
   sumLogD<-sum(log(dStar))
-  logLik_1<- ( n*log(varE) + sumLogD)
-  logLik_2<- sum(VySq/dStar)/varE
-  out<- sum(logLik_1,logLik_2)
+  logLik_1<- -0.5*( n*log(varE) + sumLogD )
+  logLik_2<- (-0.5*sum(Vy2/dStar))/varE
+  out<- -2*sum(logLik_1,logLik_2)
   return(out)
 }
+
 ```
 
 ### Example 1: Profiling the likelihood
