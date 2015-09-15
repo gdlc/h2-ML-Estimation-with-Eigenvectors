@@ -1,6 +1,6 @@
 ### Variance Componenets Estimation Using the Eigen Decomposition
 
-The code presented below contains functions for evaluating the likelihood of a random effects model using the eigenvalue decomposition of the co-variance matrix associated to a random effect. The model and derivations are described briefly [here](https://github.com/gdlc/h2-ML-Estimation-with-Eigenvectors/blob/master/simple_neg2loglik.docx). 
+The code presented below contains functions for evaluating the likelihood of a random effects model using the eigenvalue decomposition of the co-variance matrix associated to a random effect. The model and derivations are described briefly [here](https://github.com/gdlc/h2-ML-Estimation-with-Eigenvectors/blob/master/simple_neg2loglik.pdf). 
 
 Several authors have explited the equivalence between Gaussian processes and reandom regressions on eigenvectors, a few examples of these are: [de los Campos et al. (2010)](http://www.ncbi.nlm.nih.gov/pubmed/20943010) ,[Zhou and Stephens (2012) ](http://www.ncbi.nlm.nih.gov/pubmed/22706312?dopt=Abstract&holding=npg) and  [Janss et al., (2012)](http://www.genetics.org/content/192/2/693.full.pdf). 
 
