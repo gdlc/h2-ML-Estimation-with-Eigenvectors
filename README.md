@@ -31,9 +31,9 @@ neg2LogLik<-function(logVar,V,d,y){
   lambda<-varG/varE
   dStar<-(d*lambda+1)
   sumLogD<-sum(log(dStar))
-  logLik_1<- -0.5*( n*log(varE) + sumLogD )
+  logLik_1<- -0.5*log( n*log(varE) + exp(sumLogD))
   logLik_2<- (-0.5*sum(VySq/dStar))/varE
-  out<- -sum(logLik_1,logLik_2)*2
+  out<- -2*sum(logLik_1,logLik_2)
   return(out)
 }
 ```R
