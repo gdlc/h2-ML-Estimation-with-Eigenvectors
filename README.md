@@ -36,7 +36,7 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
 ```R
   # Simple simulation
    n=1000
-   p=50
+   p=20
    allFreq<-rbeta(n=p,shape1=2,shape2=3)
    X=matrix(nrow=n,ncol=p,NA)
    for(i in 1:p){ X[,i]<-rbinom(n=n,prob=allFreq[i],size=2) }
@@ -65,23 +65,11 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
    plot(-loglik~h2Grid,type='l')
   
 ```
-### A wrapper to fit the model
+### Estimation using optim
 
 ```R
-fitVarComp<-function(y,G=NULL,EVD=NULL,minEigVal=1e-4,logVar=log(0.5*rep(var(y),2))){
-  if(is.null(EVD)){
-    if(is.null(G)){ 
-      stop('Either G or EVD must be provided') 
-    }else{
-      EVD=eigen(G)
-    }
-  }
-  
-  tmp=EVD$values>minEigVal
-  EVD$vectors=EVD$vectors[,tmp]
-  EVD$values=EVD$values[tmp]
-  fm=optim(fn=neg2LogLik,par=logVar,y=y,V=EVD$vectors,d=EVD$values)
-  return(fm)
-}
+
+    fm<-optim(fn=neg2LogLik,V=EVD$vectors,d=EVD$values,y=y,par=log(c(.2,.8)),
+                                n=length(y),hessian=FALSE)
 
 ```
