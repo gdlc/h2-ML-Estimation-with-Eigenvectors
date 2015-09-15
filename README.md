@@ -1,4 +1,6 @@
 ### Variance Componenets Estimation Using the Eigen Decomposition
+*Contact*: Gustavo de los Campos (gdeloscampos@gmail.com)
+
 
 The code presented below contains functions for evaluating the likelihood of a random effects model using the eigenvalue decomposition of the co-variance matrix associated to a random effect. The model and derivations are described briefly [here](https://github.com/gdlc/h2-ML-Estimation-with-Eigenvectors/blob/master/simple_neg2loglik.pdf). 
 
