@@ -10,7 +10,7 @@ G is an nxn matrix describing covariances between the levels of the random effec
 effect (this can be easily circunvents).
 
 
-References: [de los Campos et al., 2010]()
+Several authors have explited the equivalence between Gaussian processes and reandom regressions on eigenvectors (e.g., [de los Campos et al., 2010](http://www.ncbi.nlm.nih.gov/pubmed/20943010) ,[Zhou and Stephens, 2012 ](http://www.ncbi.nlm.nih.gov/pubmed/22706312?dopt=Abstract&holding=npg), [Janss et al., 2012](http://www.genetics.org/content/192/2/693.full.pdf)). Here we use this duality between Gaussian processes and random regression on eigenvectors to simplify the computation of the log likelihood of a random effects model. Details of the derivation are provided [here]().
 
 ```R
 # A function that evaluates the log-likelihood
