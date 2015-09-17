@@ -49,7 +49,8 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
   
    h2Grid=seq(from=.1,to=.8,by=.01)
    loglik=rep(NA,length(h2Grid))
-  
+   
+   vP=var(y)
    for(i in 1:length(h2Grid)){
     varG=vP*h2Grid[i]
     varE=vP*(1-h2Grid[i])
@@ -70,3 +71,23 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
     abline(v=(varGHat/(varGHat+varEHat)),col=4)
 ```
 
+### Two-dimension grid search
+
+```R
+    vP=var(y)
+    vE=seq(from=vP/100,to=vP*99/100,by=.01)
+    vG=vE
+    
+    OUT=matrix(nrow=length(vE),ncol=length(vG),0)
+    colnames(OUT)=paste0('vG=',vG)
+    rownames(OUT)=paste0('vE=',vE)
+    
+    for(i in 1:length(vE)){
+      for(j in 1:length(vG)){
+        OUT[i,j]<-neg2LogLik(y=y,V=EVD$vectors,d=EVD$values,logVar=log(c(varE[i],varG[j])))
+      }
+    }
+    
+    
+    abline(v=(varGHat/(varGHat+varEHat)),col=4)
+```
