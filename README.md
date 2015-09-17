@@ -74,20 +74,22 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
 ### Two-dimension grid search
 
 ```R
+    library(graphics)
     vP=var(y)
-    vE=seq(from=vP/100,to=vP*99/100,by=.01)
+    vE=seq(from=vP/10,to=vP*9/10,by=.01)
     vG=vE
     
     OUT=matrix(nrow=length(vE),ncol=length(vG),0)
-    colnames(OUT)=paste0('vG=',vG)
-    rownames(OUT)=paste0('vE=',vE)
+    colnames(OUT)=paste0('vG=',round(vG,4))
+    rownames(OUT)=paste0('vE=',round(vE,4))
     
     for(i in 1:length(vE)){
       for(j in 1:length(vG)){
-        OUT[i,j]<-neg2LogLik(y=y,V=EVD$vectors,d=EVD$values,logVar=log(c(varE[i],varG[j])))
+        OUT[i,j]<-neg2LogLik(y=y,V=EVD$vectors,d=EVD$values,logVar=log(c(vE[i],vG[j])))
       }
     }
-    
-    
+    contour(x=vE,y=vG,z=OUT,nlevels=400,xlab='vE',ylab='vG')
+    points(x=exp(fm$par[1]),y=exp(fm$par[2]),col=2,pch=19,cex=1.5)
+
     abline(v=(varGHat/(varGHat+varEHat)),col=4)
 ```
