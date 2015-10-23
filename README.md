@@ -129,7 +129,7 @@ neg2LogLik_h2<-function(varP,h2,V,y,d,n=length(y)){
   G<-G/mean(diag(G))
   EVD<-eigen(G)
   V=EVD$vectors[,EVD$values>1e-5]
-  d<-EVD$values[,EVD$values>1e-5]
+  d<-EVD$values[EVD$values>1e-5]
   
   neg2LogLik_h2(y=y,V=V,d=d,varP=1.1,h2=.4)
 
@@ -164,5 +164,5 @@ profile_h2<-function(y,V,d,n=length(y),h2=seq(from=1/100,to=I(1-1/100),by=1/1000
 
 ```R
   tmp=profile_h2(y=y,V=V,d=d)
-
+  head(tmp)
 ```
