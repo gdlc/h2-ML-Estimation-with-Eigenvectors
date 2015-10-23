@@ -107,8 +107,8 @@ neg2LogLik_h2<-function(varP,h2,V,y,d,n=length(y)){
   y<-y-mean(y)
   Vy<-crossprod(V,y)
   Vy2<-as.vector(Vy)^2
-  varE<-varP*h2
-  varU<-varP*(1-h2)
+  varE<-varP*(1-h2)
+  varU<-varP*h2
   lambda<-varU/varE
   dStar<-(d*lambda+1)
   sumLogD<-sum(log(dStar))
