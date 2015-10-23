@@ -93,3 +93,76 @@ neg2LogLik<-function(logVar,V,y,d,n=length(y)){
 
     abline(v=(varGHat/(varGHat+varEHat)),col=4)
 ```
+
+### Likelihood profiling
+
+The functions below can be used to proflie a normal likelihood relative to values of heritability. For each value of heritability in a user-defined grid, the function profile_h2 obtains the maximum likelihood estimator of the phenotypic variance and evaluates the log-likelihood for the value of h2 and the MLE of phenotypic variance. 
+
+#### A function to evaluates the likelihood as a function of phenotypic variance and heritability
+
+```R
+## This function evaluates the log-likelihood as a function of the phenotypic variance and heritability
+neg2LogLik_h2<-function(varP,h2,V,y,d,n=length(y)){
+  # evaluates the log-likeihood as a function of h2 and varP (phentoypic variance)
+  y<-y-mean(y)
+  Vy<-crossprod(V,y)
+  Vy2<-as.vector(Vy)^2
+  varE<-varP*h2
+  varU<-varP*(1-h2)
+  lambda<-varU/varE
+  dStar<-(d*lambda+1)
+  sumLogD<-sum(log(dStar))
+  neg2LogLik_1<- ( n*log(varE) + sumLogD )
+  neg2LogLik_2<- (sum(Vy2/dStar))/varE
+  out<- neg2LogLik_1+neg2LogLik_2
+  return(out)
+}
+```
+
+#### Use
+
+```R
+  library(BGLR)
+  data(wheat)
+  y<-wheat.Y[,1]
+  G<-tcrossprod(scale(wheat.X))
+  G<-G/mean(diag(G))
+  EVD<-eigen(G)
+  V=EVD$vectors[,EVD$values>1e-5]
+  d<-EVD$values[,EVD$values>1e-5]
+  
+  neg2LogLik_h2(y=y,V=V,d=d,varP=1.1,h2=.4)
+
+```
+
+#### A funciton for profiling the likelihood
+
+```R
+profile_h2<-function(y,V,d,n=length(y),h2=seq(from=1/100,to=I(1-1/100),by=1/1000),plot=TRUE,returnResults=T){
+	logLik=rep(NA,length(h2))
+	for(i in 1:length(h2)){
+		fm=optimize(f=neg2LogLik_h2,V=EVD$vectors,d=EVD$values,y=y,h2=h2[i],
+                                n=length(y),interval=c(0,1)) 
+        logLik[i]= -2*fm$objective
+	}
+	
+	tmp<-which(logLik==max(logLik))
+	cond1<-logLik>max(logLik)-10
+	cond2<-logLik<max(logLik)+10
+	tmp<-(cond1&cond2)
+	x2<-logLik[tmp]
+	x1<-h2[tmp]
+  if(plot){  
+    plot(x2~x1,xlab='h2',ylab='Log-Likelihood',type='l',col=4)
+    abline(v=h2[which(logLik==max(logLik))],col=2)
+  }
+  if(returnResults){ return( data.frame(h2=h2,logLik=logLik)) }
+}
+```
+
+#### Use
+
+```R
+  tmp=profile_h2(y=y,V=V,d=d)
+
+```
