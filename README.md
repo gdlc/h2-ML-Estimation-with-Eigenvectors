@@ -139,10 +139,11 @@ neg2LogLik_h2<-function(varP,h2,V,y,d,n=length(y)){
 
 ```R
 profile_h2<-function(y,V,d,n=length(y),h2=seq(from=1/100,to=I(1-1/100),by=1/1000),plot=TRUE,returnResults=T){
+ 	varP_int<-c(.5,2)*var(y)
 	logLik=rep(NA,length(h2))
 	for(i in 1:length(h2)){
 		fm=optimize(f=neg2LogLik_h2,V=EVD$vectors,d=EVD$values,y=y,h2=h2[i],
-                                n=length(y),interval=c(0,1)) 
+                                n=length(y),interval=varP_int) 
         logLik[i]= -2*fm$objective
 	}
 	
